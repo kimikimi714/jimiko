@@ -1,4 +1,4 @@
-package jimiko
+package controller
 
 import (
 	"encoding/json"
@@ -6,6 +6,9 @@ import (
 	"net/http"
 	"os"
 	"strings"
+
+	"jimiko/presenter"
+	"jimiko/usecase"
 )
 
 type SlackRequestBody struct {
@@ -25,6 +28,14 @@ type EventData struct {
 	EventTimestamp string `json:"event_ts"`
 }
 
+type SlackController struct {
+	r SlackRequestBody
+}
+
+func NewSlackController(r SlackRequestBody) *SlackController {
+	return &SlackController{r: r}
+}
+
 // parseText is prefixを除去してメッセージの本体だけを取り出す
 func (e EventData) parseText() string {
 	text := e.Text
@@ -35,20 +46,26 @@ func (e EventData) parseText() string {
 	return text
 }
 
-// ReplyMention replies a message
-func ReplyMention(e EventData) error {
-	text := e.parseText()
-	var jsonStr string
+func (c SlackController) Reply() error {
+	text := c.r.Event.parseText()
+	ii, _ := usecase.NewItemInteractorWithSpreadsheet(os.Getenv("SPREADSHEET_ID"))
+	ip := presenter.ItemPresenter{}
+	var m string
 	var err error
-	if text == "check food" {
-		CheckFood(false)
-		jsonStr, err = createSlackMessage("log を見てください")
-	} else {
-		jsonStr, err = createSlackMessage(text)
+	switch text {
+	case "何がある?":
+		m, err = ip.ReadAllFullItems(ii)
+	case "何がない?" :
+		m, err = ip.ReadAllLackedItems(ii)
+	default:
+		log.Print("text: " + text)
+		m = "何していいかわかりません。ログを見てください。"
 	}
+	jsonStr, err := createSlackMessage(m)
 	if err != nil {
 		log.Fatalf("failed to create a message: %v", err)
 	}
+	log.Print(jsonStr)
 	err = postMessage(jsonStr)
 	if err != nil {
 		log.Fatalf("failed to post a message to slack: %v", err)

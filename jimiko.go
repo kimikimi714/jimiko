@@ -4,17 +4,20 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+
+	"jimiko/controller"
 )
 
-// Hello is jimiko の slack向けep
-func Hello(w http.ResponseWriter, r *http.Request) {
-	var d SlackRequestBody
+// Slack is Slack向けep
+func Slack(w http.ResponseWriter, r *http.Request) {
+	var d controller.SlackRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&d); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Fatalf("failed to parse: %v", r.Body)
 		return
 	}
 
+	c := controller.NewSlackController(d)
 	// Endpoint check
 	if d.Type == "url_verification" {
 		w.WriteHeader(http.StatusOK)
@@ -24,7 +27,7 @@ func Hello(w http.ResponseWriter, r *http.Request) {
 
 	// 地味子にメンション付きで話しかけた場合
 	if d.Event.Type == "app_mention" {
-		err := ReplyMention(d.Event)
+		err := c.Reply()
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return

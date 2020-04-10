@@ -1,6 +1,7 @@
-package jimiko
+package controller
 
 import (
+	"os"
 	"testing"
 )
 
@@ -14,8 +15,10 @@ func TestParseText(t *testing.T) {
 		t.Fatalf("failed test %s", act)
 	}
 
+	_ = os.Setenv("SLACK_BOT_NAME", "test bot ")
+	defer os.Unsetenv("SLACK_BOT_NAME")
 	e = EventData{
-		Text: "\u003c@UEG9LPTND\u003e test2",
+		Text: "test bot test2",
 	}
 	exp = "test2"
 	act = e.parseText()
@@ -24,9 +27,9 @@ func TestParseText(t *testing.T) {
 	}
 
 	e = EventData{
-		Text: "\u003c@UEG9LPTND test3",
+		Text: "test test3",
 	}
-	exp = "\u003c@UEG9LPTND test3"
+	exp = "test test3"
 	act = e.parseText()
 	if act != exp {
 		t.Fatalf("failed test3 %s", act)
