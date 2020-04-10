@@ -55,7 +55,7 @@ func fetchAllItemsFrom(c string, r *sheets.ValueRange) []*domain.Item {
 		}
 		a := -1
 		switch row[0] {
-		case "ある":
+		case "あり":
 			a = 1
 		case "なし":
 			a = 0
