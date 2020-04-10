@@ -16,7 +16,7 @@ func (p ItemPresenter) ReadAllLackedItems(interactor usecase.ItemInteractor) (st
 	return concatAllItems(is) + "がありません。", nil
 }
 
-func (p ItemPresenter) ReadAllFullitems(interactor usecase.ItemInteractor) (string, error) {
+func (p ItemPresenter) ReadAllFullItems(interactor usecase.ItemInteractor) (string, error) {
 	is, err := interactor.PickUpLackedItems()
 	if err != nil {
 		return "", err

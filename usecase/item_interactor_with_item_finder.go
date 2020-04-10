@@ -25,9 +25,9 @@ func (p *ItemInteractorWithItemFinder) PickUpLackedItems() ([]*domain.Item, erro
 		return nil, err
 	}
 	res := []*domain.Item{}
-	for _, item := range is {
-		if item.Amount == 0 {
-			res = append(res, item)
+	for _, i := range is {
+		if i.Amount > 0 {
+			res = append(res, i)
 		}
 	}
 	return res, nil

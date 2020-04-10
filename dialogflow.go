@@ -22,7 +22,7 @@ func Reply(e QueryResult) (string, error) {
 	ip := presenter.ItemPresenter{}
 	jsonStr := ""
 	if exists {
-		m, _ := ip.ReadAllFullitems(ii)
+		m, _ := ip.ReadAllFullItems(ii)
 		jsonStr = createDialogFlowMessage(m)
 	} else {
 		m, _ := ip.ReadAllLackedItems(ii)
