@@ -17,7 +17,7 @@ func (p ItemPresenter) ReadAllLackedItems(interactor usecase.ItemInteractor) (st
 }
 
 func (p ItemPresenter) ReadAllFullItems(interactor usecase.ItemInteractor) (string, error) {
-	is, err := interactor.PickUpLackedItems()
+	is, err := interactor.PickUpFullItems()
 	if err != nil {
 		return "", err
 	}
