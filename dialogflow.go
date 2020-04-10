@@ -1,5 +1,11 @@
 package jimiko
 
+import (
+	"jimiko/presenter"
+	"jimiko/usecase"
+	"os"
+)
+
 type DialogflowRequestBody struct {
 	QueryResult QueryResult `json:"queryResult"`
 }
@@ -12,15 +18,16 @@ type QueryResult struct {
 // ReplyMention replies a message
 func Reply(e QueryResult) (string, error) {
 	exists := e.exists()
-	food := CheckFood(exists)
-	var jsonStr string
-	var message string
+	ii, _ := usecase.NewItemInteractorWithSpreadsheet(os.Getenv("SPREADSHEET_ID"))
+	ip := presenter.ItemPresenter{}
+	jsonStr := ""
 	if exists {
-		message = food + "はあるよ"
+		m, _ := ip.ReadAllFullItems(ii)
+		jsonStr = createDialogFlowMessage(m)
 	} else {
-		message = food + "はないよ"
+		m, _ := ip.ReadAllLackedItems(ii)
+		jsonStr = createDialogFlowMessage(m)
 	}
-	jsonStr = createDialogFlowMessage(message)
 	return jsonStr, nil
 }
 
