@@ -51,6 +51,8 @@ func Dialogflow(w http.ResponseWriter, r *http.Request) {
 	_, err = w.Write([]byte(jsonStr))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		log.Fatalf("failed to write response body with json: %v", err)
+		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
