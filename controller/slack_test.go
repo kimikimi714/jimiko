@@ -10,7 +10,7 @@ func TestParseText(t *testing.T) {
 		Text: "test",
 	}
 	exp := "test"
-	act := e.parseText()
+	act := e.text()
 	if act != exp {
 		t.Fatalf("failed test %s", act)
 	}
@@ -21,7 +21,7 @@ func TestParseText(t *testing.T) {
 		Text: "test bot test2",
 	}
 	exp = "test2"
-	act = e.parseText()
+	act = e.text()
 	if act != exp {
 		t.Fatalf("failed test2 %s", act)
 	}
@@ -30,7 +30,7 @@ func TestParseText(t *testing.T) {
 		Text: "test test3",
 	}
 	exp = "test test3"
-	act = e.parseText()
+	act = e.text()
 	if act != exp {
 		t.Fatalf("failed test3 %s", act)
 	}

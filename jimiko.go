@@ -23,8 +23,8 @@ func Slack(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c := controller.NewSlackController(d)
-	err := c.Reply()
+	c := controller.SlackController{}
+	err := c.Reply(d)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -41,8 +41,8 @@ func Dialogflow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c := controller.NewDialogflowController(d)
-	jsonStr, err := c.Reply()
+	c := controller.DialogflowController{}
+	jsonStr, err := c.Reply(d)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Fatalf("failed to Reply: %v", err)

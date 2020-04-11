@@ -28,16 +28,10 @@ type EventData struct {
 	EventTimestamp string `json:"event_ts"`
 }
 
-type SlackController struct {
-	r SlackRequestBody
-}
+type SlackController struct {}
 
-func NewSlackController(r SlackRequestBody) *SlackController {
-	return &SlackController{r: r}
-}
-
-// parseText is prefixを除去してメッセージの本体だけを取り出す
-func (e EventData) parseText() string {
+// text is prefixを除去してメッセージの本体だけを取り出す
+func (e EventData) text() string {
 	text := e.Text
 	prefix := os.Getenv("SLACK_BOT_NAME")
 	if strings.HasPrefix(text, prefix) {
@@ -46,8 +40,9 @@ func (e EventData) parseText() string {
 	return text
 }
 
-func (c SlackController) Reply() error {
-	text := c.r.Event.parseText()
+// Reply is slack bot にリクエストに応じて返信をさせる
+func (c SlackController) Reply(r SlackRequestBody) error {
+	text := r.Event.text()
 	ii, _ := usecase.NewItemInteractorWithSpreadsheet(os.Getenv("SPREADSHEET_ID"))
 	ip := presenter.ItemPresenter{}
 	var m string

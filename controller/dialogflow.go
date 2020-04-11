@@ -17,16 +17,10 @@ type QueryResult struct {
 	Parameters map[string]interface{} `json:"parameters"`
 }
 
-type DialogflowController struct {
-	r DialogflowRequestBody
-}
+type DialogflowController struct {}
 
-func NewDialogflowController(r DialogflowRequestBody) *DialogflowController {
-	return &DialogflowController{r: r}
-}
-
-func (c *DialogflowController) Reply() (jsonStr string, err error) {
-	exists := c.r.QueryResult.exists()
+func (c *DialogflowController) Reply(r DialogflowRequestBody) (jsonStr string, err error) {
+	exists := r.QueryResult.exists()
 	ii, _ := usecase.NewItemInteractorWithSpreadsheet(os.Getenv("SPREADSHEET_ID"))
 	ip := presenter.ItemPresenter{}
 	if exists {
@@ -40,7 +34,6 @@ func (c *DialogflowController) Reply() (jsonStr string, err error) {
 	return jsonStr, nil
 }
 
-// parseText is prefixを除去してメッセージの本体だけを取り出す
 func (e QueryResult) exists() bool {
 	params := e.Parameters
 	if params["exists"] == "ある" {
