@@ -17,17 +17,17 @@ func Slack(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c := controller.NewSlackController(d)
-	// 地味子にメンション付きで話しかけた場合
-	if d.Event.Type == "app_mention" {
-		err := c.Reply()
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		w.WriteHeader(http.StatusOK)
+	// 地味子にメンション付きで話しかけないと反応しない
+	if d.Event.Type != "app_mention" {
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	w.WriteHeader(http.StatusBadRequest)
+	c := controller.NewSlackController(d)
+	err := c.Reply()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
 }
