@@ -1,5 +1,3 @@
-export GO111MODULE=on
-
 ## Install dependencies
 .PHONY: deps
 deps:
@@ -13,5 +11,5 @@ test:
 ## Lint
 .PHONY: lint
 lint:
-	@go vet ./...
-	@golint --set_exit_status $(go list ./... | grep -v /vendor/)
+	@golint --set_exit_status ./...
+
