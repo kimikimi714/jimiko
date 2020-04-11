@@ -54,6 +54,9 @@ func (c SlackController) Reply(r SlackRequestBody) error {
 		m, err = ip.ReadAllLackedItems(ii)
 	default:
 		log.Print("text: " + text)
+		// FIXME 本当は text を直接 slack 表示させたい
+		// text の中にメンションが含まれると無限ループに入ってしまうので
+		// 今はログに出して slack には表示させないようにしている
 		m = "何していいかわかりません。ログを見てください。"
 	}
 	if err != nil {
