@@ -56,9 +56,15 @@ func (c SlackController) Reply(r SlackRequestBody) error {
 		log.Print("text: " + text)
 		m = "何していいかわかりません。ログを見てください。"
 	}
+	if err != nil {
+		log.Printf("failed to get items: %v", err)
+		m = "買い物リストがうまく取得できませんでした"
+	}
+
 	jsonStr, err := createSlackMessage(m)
 	if err != nil {
 		log.Fatalf("failed to create a message: %v", err)
+		return err
 	}
 	log.Print(jsonStr)
 	err = postMessage(jsonStr)
