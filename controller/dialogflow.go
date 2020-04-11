@@ -1,9 +1,12 @@
-package jimiko
+package controller
 
 import (
+	"log"
+	"net/http"
+	"os"
+
 	"jimiko/presenter"
 	"jimiko/usecase"
-	"os"
 )
 
 type DialogflowRequestBody struct {
@@ -15,9 +18,17 @@ type QueryResult struct {
 	Parameters map[string]interface{} `json:"parameters"`
 }
 
-// ReplyMention replies a message
-func Reply(e QueryResult) (string, error) {
-	exists := e.exists()
+type DialogflowController struct {
+	r DialogflowRequestBody
+	w http.ResponseWriter
+}
+
+func NewDialogflowController(r DialogflowRequestBody, w http.ResponseWriter) *DialogflowController {
+	return &DialogflowController{r: r, w: w}
+}
+
+func (c *DialogflowController) Reply() error {
+	exists := c.r.QueryResult.exists()
 	ii, _ := usecase.NewItemInteractorWithSpreadsheet(os.Getenv("SPREADSHEET_ID"))
 	ip := presenter.ItemPresenter{}
 	jsonStr := ""
@@ -28,7 +39,14 @@ func Reply(e QueryResult) (string, error) {
 		m, _ := ip.ReadAllLackedItems(ii)
 		jsonStr = createDialogFlowMessage(m)
 	}
-	return jsonStr, nil
+	log.Print(jsonStr)
+	_, err := c.w.Write([]byte(jsonStr))
+	if err != nil {
+		return err
+	}
+	c.w.Header().Set("Content-Type", "application/json")
+
+	return nil
 }
 
 // parseText is prefixを除去してメッセージの本体だけを取り出す
