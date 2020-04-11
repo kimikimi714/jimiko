@@ -2,7 +2,6 @@ package controller
 
 import (
 	"log"
-	"net/http"
 	"os"
 
 	"jimiko/presenter"
@@ -20,18 +19,16 @@ type QueryResult struct {
 
 type DialogflowController struct {
 	r DialogflowRequestBody
-	w http.ResponseWriter
 }
 
-func NewDialogflowController(r DialogflowRequestBody, w http.ResponseWriter) *DialogflowController {
-	return &DialogflowController{r: r, w: w}
+func NewDialogflowController(r DialogflowRequestBody) *DialogflowController {
+	return &DialogflowController{r: r}
 }
 
-func (c *DialogflowController) Reply() error {
+func (c *DialogflowController) Reply() (jsonStr string, err error) {
 	exists := c.r.QueryResult.exists()
 	ii, _ := usecase.NewItemInteractorWithSpreadsheet(os.Getenv("SPREADSHEET_ID"))
 	ip := presenter.ItemPresenter{}
-	jsonStr := ""
 	if exists {
 		m, _ := ip.ReadAllFullItems(ii)
 		jsonStr = createDialogFlowMessage(m)
@@ -40,13 +37,7 @@ func (c *DialogflowController) Reply() error {
 		jsonStr = createDialogFlowMessage(m)
 	}
 	log.Print(jsonStr)
-	_, err := c.w.Write([]byte(jsonStr))
-	if err != nil {
-		return err
-	}
-	c.w.Header().Set("Content-Type", "application/json")
-
-	return nil
+	return jsonStr, nil
 }
 
 // parseText is prefixを除去してメッセージの本体だけを取り出す
