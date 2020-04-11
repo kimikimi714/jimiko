@@ -36,10 +36,7 @@ func (c *DialogflowController) Reply(r DialogflowRequestBody) (jsonStr string, e
 
 func (e QueryResult) exists() bool {
 	params := e.Parameters
-	if params["exists"] == "ある" {
-		return true
-	}
-	return false
+	return params["exists"] == "ある"
 }
 
 // createDialogFlowMessage creates a message to post to slack
