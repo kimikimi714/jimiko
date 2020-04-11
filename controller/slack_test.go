@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestParseText(t *testing.T) {
+func TestText(t *testing.T) {
 	e := EventData{
 		Text: "test",
 	}
@@ -36,7 +36,7 @@ func TestParseText(t *testing.T) {
 	}
 }
 
-func TestCreateMessage(t *testing.T) {
+func TestCreateSlackMessage(t *testing.T) {
 	org := "test"
 	exp := `{"text":"test"}`
 	act, err := createSlackMessage(org)
