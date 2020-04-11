@@ -2,7 +2,6 @@ package jimiko
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -19,15 +18,6 @@ func Slack(w http.ResponseWriter, r *http.Request) {
 	}
 
 	c := controller.NewSlackController(d)
-	// Endpoint check
-	if d.Type == "url_verification" {
-		w.Header().Set("Content-Type", "application/json")
-		_, _ = fmt.Fprint(w, `{"challenge": %s}`, d.Challenge)
-		w.WriteHeader(http.StatusOK)
-		log.Printf("succeeded to challenge: %s", d.Challenge)
-		return
-	}
-
 	// 地味子にメンション付きで話しかけた場合
 	if d.Event.Type == "app_mention" {
 		err := c.Reply()
