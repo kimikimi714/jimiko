@@ -10,12 +10,14 @@ import (
 	"github.com/kimikimi714/jimiko/domain"
 )
 
+// ItemFinderWithSpreadsheet searches items in shopping list spreadsheet.
 type ItemFinderWithSpreadsheet struct {
 	svr *sheets.Service
 	id  string
 }
 
-func NewItemFinderWithSpreadsheet(spreadsheetId string) (*ItemFinderWithSpreadsheet, error) {
+// NewItemFinderWithSpreadsheet creates ItemFinderWithSpreadsheet instance.
+func NewItemFinderWithSpreadsheet(spreadsheetID string) (*ItemFinderWithSpreadsheet, error) {
 	ctx := context.Background()
 
 	s, err := sheets.NewService(ctx, option.WithScopes(sheets.SpreadsheetsReadonlyScope))
@@ -26,10 +28,11 @@ func NewItemFinderWithSpreadsheet(spreadsheetId string) (*ItemFinderWithSpreadsh
 
 	return &ItemFinderWithSpreadsheet{
 		svr: s,
-		id:  spreadsheetId,
+		id:  spreadsheetID,
 	}, nil
 }
 
+// FindAll finds all items in shopping list from spreadsheet.
 func (f *ItemFinderWithSpreadsheet) FindAll() ([]*domain.Item, error) {
 	ss, err := f.svr.Spreadsheets.Get(f.id).Do()
 	if err != nil {
