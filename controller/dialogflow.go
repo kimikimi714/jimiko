@@ -1,9 +1,11 @@
-package jimiko
+package controller
 
 import (
+	"log"
+	"os"
+
 	"jimiko/presenter"
 	"jimiko/usecase"
-	"os"
 )
 
 type DialogflowRequestBody struct {
@@ -15,29 +17,30 @@ type QueryResult struct {
 	Parameters map[string]interface{} `json:"parameters"`
 }
 
-// ReplyMention replies a message
-func Reply(e QueryResult) (string, error) {
-	exists := e.exists()
+type DialogflowController struct {}
+
+func (c *DialogflowController) Reply(r DialogflowRequestBody) (jsonStr string, err error) {
+	exists := r.QueryResult.exists()
 	ii, _ := usecase.NewItemInteractorWithSpreadsheet(os.Getenv("SPREADSHEET_ID"))
 	ip := presenter.ItemPresenter{}
-	jsonStr := ""
+	m := ""
 	if exists {
-		m, _ := ip.ReadAllFullItems(ii)
-		jsonStr = createDialogFlowMessage(m)
+		m, err = ip.ReadAllFullItems(ii)
 	} else {
-		m, _ := ip.ReadAllLackedItems(ii)
-		jsonStr = createDialogFlowMessage(m)
+		m, err = ip.ReadAllLackedItems(ii)
 	}
+	if err != nil {
+		log.Printf("failed to get items: %v", err)
+		m = "買い物リストがうまく取得できませんでした"
+	}
+	jsonStr = createDialogFlowMessage(m)
+	log.Print(jsonStr)
 	return jsonStr, nil
 }
 
-// parseText is prefixを除去してメッセージの本体だけを取り出す
 func (e QueryResult) exists() bool {
 	params := e.Parameters
-	if params["exists"] == "ある" {
-		return true
-	}
-	return false
+	return params["exists"] == "ある"
 }
 
 // createDialogFlowMessage creates a message to post to slack
