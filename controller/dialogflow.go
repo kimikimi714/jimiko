@@ -17,7 +17,7 @@ type QueryResult struct {
 	Parameters map[string]interface{} `json:"parameters"`
 }
 
-type DialogflowController struct {}
+type DialogflowController struct{}
 
 func (c *DialogflowController) Reply(r DialogflowRequestBody) (jsonStr string, err error) {
 	exists := r.QueryResult.exists()

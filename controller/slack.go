@@ -28,7 +28,7 @@ type EventData struct {
 	EventTimestamp string `json:"event_ts"`
 }
 
-type SlackController struct {}
+type SlackController struct{}
 
 // text is prefixを除去してメッセージの本体だけを取り出す
 func (e EventData) text() string {
@@ -50,7 +50,7 @@ func (c SlackController) Reply(r SlackRequestBody) error {
 	switch text {
 	case "何がある?":
 		m, err = ip.ReadAllFullItems(ii)
-	case "何がない?" :
+	case "何がない?":
 		m, err = ip.ReadAllLackedItems(ii)
 	default:
 		log.Print("text: " + text)

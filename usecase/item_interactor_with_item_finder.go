@@ -24,7 +24,7 @@ func (p *ItemInteractorWithItemFinder) PickUpLackedItems() ([]*domain.Item, erro
 	if err != nil {
 		return nil, err
 	}
-	res := []*domain.Item{}
+	var res []*domain.Item
 	for _, i := range is {
 		if i.Amount == 0 {
 			res = append(res, i)
@@ -38,7 +38,7 @@ func (p *ItemInteractorWithItemFinder) PickUpFullItems() ([]*domain.Item, error)
 	if err != nil {
 		return nil, err
 	}
-	res := []*domain.Item{}
+	var res []*domain.Item
 	for _, i := range is {
 		if i.Amount > 0 {
 			res = append(res, i)

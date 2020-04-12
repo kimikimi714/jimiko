@@ -49,7 +49,7 @@ func (f *ItemFinderWithSpreadsheet) FindAll() ([]*domain.Item, error) {
 }
 
 func fetchAllItemsFrom(c string, r *sheets.ValueRange) []*domain.Item {
-	res := []*domain.Item{}
+	var res []*domain.Item
 	for i, row := range r.Values {
 		if i == 0 {
 			continue

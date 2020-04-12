@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/kimikimi714/jimiko/controller"
-	)
+)
 
 // Slack is Slack向けep
 func Slack(w http.ResponseWriter, r *http.Request) {
