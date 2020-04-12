@@ -10,7 +10,7 @@ import (
 func TestItemPresenter_ReadAllFullItems(t *testing.T) {
 	var p ItemPresenter
 	mock := dummyItemFilter{
-		fullItems: []*domain.Item{
+		is: []*domain.Item{
 			{
 				Category: domain.Foods,
 				Amount:   1,
@@ -46,7 +46,7 @@ func TestItemPresenter_ReadAllFullItems(t *testing.T) {
 func TestItemPresenter_ReadAllLackedItems(t *testing.T) {
 	var p ItemPresenter
 	mock := dummyItemFilter{
-		lackItems: []*domain.Item{
+		is: []*domain.Item{
 			{
 				Category: domain.Foods,
 				Amount:   0,
@@ -80,21 +80,14 @@ func TestItemPresenter_ReadAllLackedItems(t *testing.T) {
 }
 
 type dummyItemFilter struct {
-	lackItems []*domain.Item
-	fullItems []*domain.Item
+	is        []*domain.Item
 	err       error
 }
 
 func (p *dummyItemFilter) PickUpLackedItems() ([]*domain.Item, error) {
-	if p.err != nil {
-		return []*domain.Item{}, p.err
-	}
-	return p.lackItems, nil
+	return p.is, p.err
 }
 
 func (p *dummyItemFilter) PickUpFullItems() ([]*domain.Item, error) {
-	if p.err != nil {
-		return []*domain.Item{}, p.err
-	}
-	return p.fullItems, nil
+	return p.is, p.err
 }
