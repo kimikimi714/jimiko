@@ -11,8 +11,8 @@ type ItemPresenter struct {}
 
 // ReadAllLackedItems processes into a phrase that means what items are not enough
 // in shopping list.
-func (p ItemPresenter) ReadAllLackedItems(interactor usecase.ItemFilter) (string, error) {
-	is, err := interactor.PickUpLackedItems()
+func (p ItemPresenter) ReadAllLackedItems(filter usecase.ItemFilter) (string, error) {
+	is, err := filter.PickUpLackedItems()
 	if err != nil {
 		return "", err
 	}
@@ -21,8 +21,8 @@ func (p ItemPresenter) ReadAllLackedItems(interactor usecase.ItemFilter) (string
 
 // ReadAllFullItems processes into a phrase that means what items are enough
 // in shopping list.
-func (p ItemPresenter) ReadAllFullItems(interactor usecase.ItemFilter) (string, error) {
-	is, err := interactor.PickUpFullItems()
+func (p ItemPresenter) ReadAllFullItems(filter usecase.ItemFilter) (string, error) {
+	is, err := filter.PickUpFullItems()
 	if err != nil {
 		return "", err
 	}
