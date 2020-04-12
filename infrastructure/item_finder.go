@@ -1,7 +1,7 @@
 package infrastructure
 
 import (
-	"jimiko/domain"
+	"github.com/kimikimi714/jimiko/domain"
 )
 
 type ItemFinder interface {

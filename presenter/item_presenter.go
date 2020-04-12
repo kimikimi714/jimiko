@@ -1,8 +1,8 @@
 package presenter
 
 import (
-	"jimiko/domain"
-	"jimiko/usecase"
+	"github.com/kimikimi714/jimiko/domain"
+	"github.com/kimikimi714/jimiko/usecase"
 )
 
 type ItemPresenter struct {

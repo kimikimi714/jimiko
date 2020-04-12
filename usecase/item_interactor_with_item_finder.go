@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"jimiko/domain"
-	"jimiko/infrastructure"
+	"github.com/kimikimi714/jimiko/domain"
+	"github.com/kimikimi714/jimiko/infrastructure"
 )
 
 type ItemInteractorWithItemFinder struct {

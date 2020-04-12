@@ -4,8 +4,8 @@ import (
 	"log"
 	"os"
 
-	"jimiko/presenter"
-	"jimiko/usecase"
+	"github.com/kimikimi714/jimiko/presenter"
+	"github.com/kimikimi714/jimiko/usecase"
 )
 
 type DialogflowRequestBody struct {

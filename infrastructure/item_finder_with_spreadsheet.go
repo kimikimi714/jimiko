@@ -2,11 +2,12 @@ package infrastructure
 
 import (
 	"context"
-	"jimiko/domain"
 	"log"
 
 	"google.golang.org/api/option"
 	"google.golang.org/api/sheets/v4"
+
+	"github.com/kimikimi714/jimiko/domain"
 )
 
 type ItemFinderWithSpreadsheet struct {

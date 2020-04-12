@@ -1,7 +1,7 @@
 package usecase
 
 import (
-	"jimiko/domain"
+	"github.com/kimikimi714/jimiko/domain"
 )
 
 type ItemInteractor interface {
