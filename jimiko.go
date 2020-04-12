@@ -45,7 +45,6 @@ func Dialogflow(w http.ResponseWriter, r *http.Request) {
 	jsonStr, err := c.Reply(d)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		log.Fatalf("failed to Reply: %v", err)
 		return
 	}
 	_, err = w.Write([]byte(jsonStr))

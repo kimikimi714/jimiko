@@ -23,13 +23,17 @@ func (c *DialogflowController) Reply(r DialogflowRequestBody) (jsonStr string, e
 	exists := r.QueryResult.exists()
 	ii, _ := usecase.NewItemInteractorWithSpreadsheet(os.Getenv("SPREADSHEET_ID"))
 	ip := presenter.ItemPresenter{}
+	m := ""
 	if exists {
-		m, _ := ip.ReadAllFullItems(ii)
-		jsonStr = createDialogFlowMessage(m)
+		m, err = ip.ReadAllFullItems(ii)
 	} else {
-		m, _ := ip.ReadAllLackedItems(ii)
-		jsonStr = createDialogFlowMessage(m)
+		m, err = ip.ReadAllLackedItems(ii)
 	}
+	if err != nil {
+		log.Printf("failed to get items: %v", err)
+		m = "買い物リストがうまく取得できませんでした"
+	}
+	jsonStr = createDialogFlowMessage(m)
 	log.Print(jsonStr)
 	return jsonStr, nil
 }
