@@ -1,23 +1,28 @@
 package presenter
 
 import (
-	"jimiko/domain"
-	"jimiko/usecase"
+	"github.com/kimikimi714/jimiko/domain"
+	"github.com/kimikimi714/jimiko/usecase"
 )
 
-type ItemPresenter struct {
-}
+// ItemPresenter creates some sentences which take into account
+// item statuses in shopping list.
+type ItemPresenter struct {}
 
-func (p ItemPresenter) ReadAllLackedItems(interactor usecase.ItemInteractor) (string, error) {
-	is, err := interactor.PickUpLackedItems()
+// ReadAllLackedItems processes into a phrase that means what items are not enough
+// in shopping list.
+func (p ItemPresenter) ReadAllLackedItems(filter usecase.ItemFilter) (string, error) {
+	is, err := filter.PickUpLackedItems()
 	if err != nil {
 		return "", err
 	}
 	return concatAllItems(is) + "がありません。", nil
 }
 
-func (p ItemPresenter) ReadAllFullItems(interactor usecase.ItemInteractor) (string, error) {
-	is, err := interactor.PickUpFullItems()
+// ReadAllFullItems processes into a phrase that means what items are enough
+// in shopping list.
+func (p ItemPresenter) ReadAllFullItems(filter usecase.ItemFilter) (string, error) {
+	is, err := filter.PickUpFullItems()
 	if err != nil {
 		return "", err
 	}

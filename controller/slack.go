@@ -7,10 +7,11 @@ import (
 	"os"
 	"strings"
 
-	"jimiko/presenter"
-	"jimiko/usecase"
+	"github.com/kimikimi714/jimiko/presenter"
+	"github.com/kimikimi714/jimiko/usecase"
 )
 
+// SlackRequestBody represents a request from Slack.
 type SlackRequestBody struct {
 	Type      string `json:"type"`
 	Token     string `json:"token"`
@@ -18,7 +19,7 @@ type SlackRequestBody struct {
 	Event     EventData
 }
 
-// EventData is slackから飛んでくるeventを表すEntity
+// EventData represents event data from slack.
 type EventData struct {
 	Type           string `json:"type"`
 	UserID         string `json:"user"`
@@ -28,9 +29,10 @@ type EventData struct {
 	EventTimestamp string `json:"event_ts"`
 }
 
-type SlackController struct {}
+// SlackController represents interface which communicates with Slack.
+type SlackController struct{}
 
-// text is prefixを除去してメッセージの本体だけを取り出す
+// text extracts text excluding bot name.
 func (e EventData) text() string {
 	text := e.Text
 	prefix := os.Getenv("SLACK_BOT_NAME")
@@ -40,17 +42,17 @@ func (e EventData) text() string {
 	return text
 }
 
-// Reply is slack bot にリクエストに応じて返信をさせる
+// Reply replies messages with enough / not enough shopping list to Slack.
 func (c SlackController) Reply(r SlackRequestBody) error {
 	text := r.Event.text()
-	ii, _ := usecase.NewItemInteractorWithSpreadsheet(os.Getenv("SPREADSHEET_ID"))
+	ii, _ := usecase.NewItemFilterWithSpreadsheet(os.Getenv("SPREADSHEET_ID"))
 	ip := presenter.ItemPresenter{}
 	var m string
 	var err error
 	switch text {
 	case "何がある?":
 		m, err = ip.ReadAllFullItems(ii)
-	case "何がない?" :
+	case "何がない?":
 		m, err = ip.ReadAllLackedItems(ii)
 	default:
 		log.Print("text: " + text)

@@ -4,24 +4,29 @@ import (
 	"log"
 	"os"
 
-	"jimiko/presenter"
-	"jimiko/usecase"
+	"github.com/kimikimi714/jimiko/presenter"
+	"github.com/kimikimi714/jimiko/usecase"
 )
 
+// DialogflowRequestBody represents a request from Dialogflow.
 type DialogflowRequestBody struct {
 	QueryResult QueryResult `json:"queryResult"`
 }
 
+// QueryResult includes data that Dialogflow analyzed a phase and
+// split into words.
 type QueryResult struct {
 	QueryText  string                 `json:"queryText"`
 	Parameters map[string]interface{} `json:"parameters"`
 }
 
-type DialogflowController struct {}
+// DialogflowController represents interface which communicates with Dialogflow.
+type DialogflowController struct{}
 
+// Reply replies messages with enough / not enough shopping list to Dialogflow.
 func (c *DialogflowController) Reply(r DialogflowRequestBody) (jsonStr string, err error) {
 	exists := r.QueryResult.exists()
-	ii, _ := usecase.NewItemInteractorWithSpreadsheet(os.Getenv("SPREADSHEET_ID"))
+	ii, _ := usecase.NewItemFilterWithSpreadsheet(os.Getenv("SPREADSHEET_ID"))
 	ip := presenter.ItemPresenter{}
 	m := ""
 	if exists {

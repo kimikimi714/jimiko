@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"jimiko/controller"
+	"github.com/kimikimi714/jimiko/controller"
 )
 
 // Slack is Slack向けep

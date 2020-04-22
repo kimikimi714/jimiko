@@ -1,4 +1,4 @@
-module jimiko
+module github.com/kimikimi714/jimiko
 
 require (
 	cloud.google.com/go v0.56.0 // indirect
