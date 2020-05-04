@@ -25,3 +25,10 @@ jobs:
         github_token: ${{ secrets.github_token }}
     - name: test
       run: go test ./... -v
+
+    - name: Send notification to Slack when CI has done.
+      uses: pullreminders/slack-action@v1
+      with:
+        args: '{\"channel\":\"notify\", \"text\":\"GitHubのCI終わったよ\"}'
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
