@@ -34,7 +34,7 @@ Google HomeとDialogflowを接続する方法などは[こちらの記事](https
 # ユニットテスト
 
 ```
-go test ./... -v
+make test
 ```
 
 # デプロイ
