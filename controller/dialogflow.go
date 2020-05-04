@@ -48,7 +48,7 @@ func (c *DialogflowController) Reply(r DialogflowRequestBody) (jsonStr string, e
 
 func (e QueryResult) exists() bool {
 	params := e.Parameters
-	return params["exists"] == "ある"
+	return params["exists"] == "enough"
 }
 
 func (e QueryResult) getItemName() string {
