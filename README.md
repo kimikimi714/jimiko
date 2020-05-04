@@ -45,3 +45,11 @@ go test ./... -v
 ```
 scripts/deploy.sh {dialogflow|slack}
 ```
+
+## 作者
+
+[kimikimi714](https://kimikimi714.hatenablog.com/)
+
+## ライセンス
+
+MIT
