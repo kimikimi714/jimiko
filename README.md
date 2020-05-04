@@ -1,7 +1,7 @@
 Jimiko
 ======
 
-![](https://github.com/kimikimi714/jimiko/workflows/test/badge.svg)
+![](https://github.com/kimikimi714/jimiko/workflows/go-ci/badge.svg)
 
 話しかけたらいい感じに家のことを回してくれるbotです。  
 現時点ではGoogle Home(+Dialogflow)とSlackに対応しています。
