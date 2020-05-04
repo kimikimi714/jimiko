@@ -25,3 +25,8 @@ jobs:
         github_token: ${{ secrets.github_token }}
     - name: test
       run: go test ./... -v
+
+    - name: Slack Notification
+      uses: rtCamp/action-slack-notify@v2.0.0
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}

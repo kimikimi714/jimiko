@@ -50,3 +50,17 @@ func (p *ItemFilterWithItemFinder) PickUpFullItems() ([]*domain.Item, error) {
 	}
 	return res, nil
 }
+
+// PickUpItem picks up an item by item name.
+func (p *ItemFilterWithItemFinder) PickUpItem(name string) (*domain.Item, error) {
+	is, err := p.itemFinder.FindAll()
+	if err != nil {
+		return nil, err
+	}
+	for _, i := range is {
+		if i.Name == name {
+			return i, nil
+		}
+	}
+	return nil, nil
+}
