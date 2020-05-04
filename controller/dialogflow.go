@@ -29,7 +29,10 @@ func (c *DialogflowController) Reply(r DialogflowRequestBody) (jsonStr string, e
 	ii, _ := usecase.NewItemFilterWithSpreadsheet(os.Getenv("SPREADSHEET_ID"))
 	ip := presenter.ItemPresenter{}
 	m := ""
-	if exists {
+	name := r.QueryResult.getItemName()
+	if name != "" {
+		m, err = ip.ReadItemStatus(name, ii)
+	} else if exists {
 		m, err = ip.ReadAllFullItems(ii)
 	} else {
 		m, err = ip.ReadAllLackedItems(ii)
@@ -46,6 +49,14 @@ func (c *DialogflowController) Reply(r DialogflowRequestBody) (jsonStr string, e
 func (e QueryResult) exists() bool {
 	params := e.Parameters
 	return params["exists"] == "ある"
+}
+
+func (e QueryResult) getItemName() string {
+	params := e.Parameters
+	if params["item"] != nil {
+		return params["item"].(string)
+	}
+	return ""
 }
 
 // createDialogFlowMessage creates a message to post to slack

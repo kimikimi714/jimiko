@@ -29,6 +29,18 @@ func (p ItemPresenter) ReadAllFullItems(filter usecase.ItemFilter) (string, erro
 	return concatAllItems(is) + "があります。", nil
 }
 
+// ReadItemStatus processes into a phrase that means we have the item or not.
+func (p ItemPresenter) ReadItemStatus(name string, filter usecase.ItemFilter) (string, error) {
+	i, err := filter.PickUpItem(name)
+	if err != nil {
+		return "", err
+	}
+	if i.Amount > 0 {
+		return  i.Name + "はあるよ。", nil
+	}
+	return  i.Name + "はないよ。", nil
+}
+
 func concatAllItems(is []*domain.Item) string {
 	res := ""
 	for _, item := range is {

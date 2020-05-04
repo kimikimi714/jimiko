@@ -8,4 +8,5 @@ import (
 type ItemFilter interface {
 	PickUpLackedItems() ([]*domain.Item, error)
 	PickUpFullItems() ([]*domain.Item, error)
+	PickUpItem(name string) (*domain.Item, error)
 }
