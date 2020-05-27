@@ -54,6 +54,8 @@ func (c SlackController) Reply(r SlackRequestBody) error {
 		m, err = ip.ReadAllFullItems(ii)
 	case "何がない?":
 		m, err = ip.ReadAllLackedItems(ii)
+	case "買い物リスト":
+		m = "https://docs.google.com/spreadsheets/d/" + os.Getenv("SPREADSHEET_ID")
 	default:
 		log.Print("text: " + text)
 		// FIXME 本当は text を直接 slack 表示させたい

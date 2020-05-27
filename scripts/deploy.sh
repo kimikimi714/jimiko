@@ -23,7 +23,7 @@ slack)
   ENDPOINT="Slack"
   ;;
 dialogflow)
-  FUNCTION="jimiko"
+  FUNCTION="jimiko-dialogflow"
   ENDPOINT="Dialogflow"
   ;;
 --help | -h)
