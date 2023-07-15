@@ -19,7 +19,7 @@ EOF
 
 case $1 in
 slack)
-  FUNCTION="jimiko-slack"
+  FUNCTION="jimiko-slack-2nd-gen"
   ENDPOINT="Slack"
   ;;
 dialogflow)
@@ -47,4 +47,4 @@ if [ -z $ENDPOINT ]; then
   exit 1
 fi
 
-gcloud functions deploy $FUNCTION --entry-point $ENDPOINT --trigger-http --runtime=go111 --region=asia-northeast1 --env-vars-file .env.yaml
+gcloud functions deploy $FUNCTION --gen2 --entry-point $ENDPOINT --trigger-http --runtime=go120 --region=asia-northeast1 --env-vars-file .env.yaml
