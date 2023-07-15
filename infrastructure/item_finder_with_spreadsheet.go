@@ -57,24 +57,27 @@ func fetchAllItemsFrom(c string, r *sheets.ValueRange) []*domain.Item {
 		if i == 0 {
 			continue
 		}
-		a := -1
-		switch row[0] {
-		case "あり":
-			a = 1
-		case "なし":
-			a = 0
-		default:
-			continue
-		}
 		n, ok := row[1].(string)
 		if !ok {
 			continue
 		}
-		res = append(res, &domain.Item{
-			Category: domain.Category(c),
-			Amount:   a,
-			Name:     n,
-		})
+		switch row[0] {
+		case "あり":
+			res = append(res, &domain.Item{
+				Category: domain.Category(c),
+				Amount:   1,
+				Name:     n,
+			})
+		case "なし":
+			res = append(res, &domain.Item{
+				Category: domain.Category(c),
+				Amount:   0,
+				Name:     n,
+			})
+		default:
+			continue
+		}
+
 	}
 	return res
 }
