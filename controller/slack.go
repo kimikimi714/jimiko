@@ -1,11 +1,17 @@
 package controller
 
 import (
+	"crypto/hmac"
+	"crypto/sha256"
 	"encoding/json"
+	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/kimikimi714/jimiko/presenter"
 	"github.com/kimikimi714/jimiko/usecase"
@@ -40,6 +46,32 @@ func (e EventData) text() string {
 		return strings.TrimPrefix(text, prefix)
 	}
 	return text
+}
+
+func (c SlackController) Verify(r *http.Request) error {
+	ht := r.Header.Get("X-Slack-Request-Timestamp")
+	sec, err := strconv.ParseInt(ht, 10, 64)
+	if err != nil {
+		log.Fatalf("Cannot parse X-Slack-Request-Timestamp header. Error: %s", err)
+		return err
+	}
+	t := time.Now()
+	if t.Sub(time.Unix(sec, 0)) > 60*5 {
+		m := "It could be a replay attack, so let's ignore it."
+		log.Fatal(m)
+		return fmt.Errorf("Error: %s", m)
+	}
+	bufOfRequestBody, _ := io.ReadAll(r.Body)
+	mac := hmac.New(sha256.New, []byte(os.Getenv("SLACK_SIGINING_SECRET")))
+	mac.Write([]byte("v0:" + ht + ":" + string(bufOfRequestBody)))
+	expectedMAC := mac.Sum(nil)
+	sign := r.Header.Get("X-Slack-Signature")
+	if hmac.Equal([]byte(sign), expectedMAC) {
+		m := "Cannot verify this request."
+		log.Fatal(m)
+		return fmt.Errorf("Error: %s", m)
+	}
+	return nil
 }
 
 // Reply replies messages with enough / not enough shopping list to Slack.

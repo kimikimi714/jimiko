@@ -10,6 +10,12 @@ import (
 
 // Slack is Slack向けep
 func Slack(w http.ResponseWriter, r *http.Request) {
+	c := controller.SlackController{}
+	err := c.Verify(r)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+
 	var d controller.SlackRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&d); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -23,12 +29,10 @@ func Slack(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c := controller.SlackController{}
-	err := c.Reply(d)
+	err = c.Reply(d)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
 }
-
