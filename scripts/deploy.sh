@@ -47,4 +47,7 @@ if [ -z $ENDPOINT ]; then
   exit 1
 fi
 
-gcloud functions deploy $FUNCTION --gen2 --entry-point $ENDPOINT --trigger-http --runtime=go120 --region=asia-northeast1 --env-vars-file .env.yaml
+gcloud functions deploy $FUNCTION --entry-point $ENDPOINT \
+  --gen2 --trigger-http --region=asia-northeast1 \
+  --env-vars-file .env.yaml \
+  --runtime=go120 --set-secrets 'SLACK_SIGINING_SECRET=jimiko-slack-signing:latest'
