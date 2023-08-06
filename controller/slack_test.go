@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"bytes"
 	"encoding/json"
 	"os"
 	"testing"
@@ -59,8 +58,7 @@ func TestParseRequest(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var got SlackRequestBody
-			decoder := json.NewDecoder(bytes.NewReader([]byte(tt.json)))
-			if err := decoder.Decode(&got); err != nil {
+			if err := json.Unmarshal([]byte(tt.json), &got); err != nil {
 				t.Fatalf("failed test: %+v", err)
 			}
 			if diff := cmp.Diff(tt.want, got); diff != "" {
