@@ -3,7 +3,6 @@ run-name: CI triggered by ${{ github.actor }}
 
 on:
   push:
-  pull_request:
 
 jobs:
   lint:
