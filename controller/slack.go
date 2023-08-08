@@ -3,9 +3,9 @@ package controller
 import (
 	"crypto/hmac"
 	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"os"
@@ -48,28 +48,50 @@ func (e EventData) text() string {
 	return text
 }
 
-func (c SlackController) Verify(r *http.Request) error {
-	ht := r.Header.Get("X-Slack-Request-Timestamp")
-	sec, err := strconv.ParseInt(ht, 10, 64)
+func (c SlackController) Verify(headers http.Header, body, secret string) error {
+	timestamp := headers.Get("X-Slack-Request-Timestamp")
+	signature := headers.Get("X-Slack-Signature")
+	err := checkHeaders(timestamp, signature)
 	if err != nil {
-		log.Fatalf("Cannot parse X-Slack-Request-Timestamp header. Error: %s", err)
 		return err
 	}
-	t := time.Now()
-	if t.Sub(time.Unix(sec, 0)) > 60*5 {
-		m := "It could be a replay attack, so let's ignore it."
-		log.Fatal(m)
-		return fmt.Errorf("Error: %s", m)
+	if secret == "" {
+		return fmt.Errorf("SLACK_SIGINING_SECRET is empty.")
 	}
-	bufOfRequestBody, _ := io.ReadAll(r.Body)
-	mac := hmac.New(sha256.New, []byte(os.Getenv("SLACK_SIGINING_SECRET")))
-	mac.Write([]byte("v0:" + ht + ":" + string(bufOfRequestBody)))
+	err = checkHMAC(body, secret, timestamp, signature)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func checkHeaders(timestamp string, signature string) error {
+	if timestamp == "" || signature == "" {
+		return fmt.Errorf("Required headers are missing.")
+	}
+	sec, err := strconv.ParseInt(timestamp, 10, 64)
+	if err != nil {
+		return fmt.Errorf("Cannot parse X-Slack-Request-Timestamp header. Error: %s", err)
+	}
+
+	if time.Now().Unix()-sec > 60*5 {
+		return fmt.Errorf("Expired timestamp.")
+	}
+	return nil
+}
+
+func checkHMAC(body, secret, timestamp, signature string) error {
+	mac := hmac.New(sha256.New, []byte(secret))
+	mac.Write([]byte("v0:" + timestamp + ":" + body))
 	expectedMAC := mac.Sum(nil)
-	sign := r.Header.Get("X-Slack-Signature")
-	if hmac.Equal([]byte(sign), expectedMAC) {
-		m := "Cannot verify this request."
-		log.Fatal(m)
-		return fmt.Errorf("Error: %s", m)
+	bsignature, err := hex.DecodeString(strings.TrimPrefix(signature, "v0="))
+	if err != nil {
+		return err
+	}
+
+	if !hmac.Equal(bsignature, expectedMAC) {
+		log.Printf("sig: %v, calc: %v", []byte(signature[3:]), expectedMAC)
+		return fmt.Errorf("Cannot verify this request.")
 	}
 	return nil
 }
