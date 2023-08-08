@@ -20,9 +20,9 @@ import (
 // SlackRequestBody represents a request from Slack.
 type SlackRequestBody struct {
 	Type      string    `json:"type"`
-	Token     string    `json:"token,ommitempty"`
-	Challenge string    `json:"challenge,ommitempty"`
-	Event     EventData `json:"event,ommitempty"`
+	Token     string    `json:"token,omitempty"`
+	Challenge string    `json:"challenge,omitempty"`
+	Event     EventData `json:"event,omitempty"`
 }
 
 // EventData represents event data from slack.
