@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"net/http"
 	"os"
 	"strconv"
 	"strings"
@@ -12,77 +11,96 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-func newHeader(sign, timestamp string) http.Header {
-	h := http.Header{}
-	h.Set("X-Slack-Signature", sign)
-	h.Set("X-Slack-Request-Timestamp", timestamp)
-	return h
-}
-
-func TestVerify(t *testing.T) {
+func TestCheckHeaders(t *testing.T) {
 	tests := []struct {
 		name       string
 		signature  string
 		timestamp  string
-		secret     string
 		errMessage string
 	}{
 		{
 			name:       "headers missing",
 			signature:  "",
 			timestamp:  "",
-			secret:     "",
 			errMessage: "Required headers are missing.",
 		},
 		{
 			name:       "signature header missing",
 			signature:  "",
 			timestamp:  "11111",
-			secret:     "",
 			errMessage: "Required headers are missing.",
 		},
 		{
 			name:       "timestamp header missing",
 			signature:  "aaa",
 			timestamp:  "",
-			secret:     "",
 			errMessage: "Required headers are missing.",
-		},
-		{
-			name:       "secret is empty",
-			signature:  "aaa",
-			timestamp:  "dummy",
-			secret:     "",
-			errMessage: "SLACK_SIGINING_SECRET is empty.",
-		},
-		{
-			name:       "expired timestamp",
-			signature:  "aaa",
-			timestamp:  "111",
-			secret:     "dummy",
-			errMessage: "Expired timestamp.",
 		},
 		{
 			name:       "cannot parse timestamp",
 			signature:  "aaa",
 			timestamp:  "dummy",
-			secret:     "dummy",
 			errMessage: "Cannot parse X-Slack-Request-Timestamp header.",
 		},
 		{
-			name:       "expired timestamp",
+			name:       "expired 10 min ago",
 			signature:  "aaa",
-			timestamp:  strconv.FormatInt(time.Unix(time.Now().Unix()+60*3, 0).Unix(), 10),
-			secret:     "dummy",
+			timestamp:  strconv.FormatInt(time.Now().Unix()-60*10, 10),
 			errMessage: "Expired timestamp.",
+		},
+		{
+			name:       "nomal headers",
+			signature:  "aaa",
+			timestamp:  strconv.FormatInt(time.Now().Unix()+60, 10),
+			errMessage: "none",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := SlackController{}
-			err := c.Verify(newHeader(tt.signature, tt.timestamp), []byte{}, tt.secret)
+			err := checkHeaders(tt.timestamp, tt.signature)
 			if err != nil && !strings.Contains(err.Error(), tt.errMessage) {
-				t.Fatalf("failed test: %+v", err)
+				t.Fatalf("SlackController.checkHeaders():%s failed. err: %v.", tt.name, err)
+			} else if err == nil && tt.errMessage != "none" {
+				t.Fatalf("SlackController.checkHeaders():%s failed.", tt.name)
+			}
+		})
+	}
+}
+
+func TestCheckHMAC(t *testing.T) {
+	tests := []struct {
+		name       string
+		body       string
+		secret     string
+		timestamp  string
+		signature  string
+		errMessage string
+	}{
+		{
+			name:       "cannot verify",
+			body:       "hoge",
+			secret:     "dummy",
+			timestamp:  "111",
+			signature:  "v0=a2114d57b48eac39b9ad189dd8316235a7b4a8d21a10bd27519666489c69b503",
+			errMessage: "Cannot verify this request.",
+		},
+		{
+			// see: https://api.slack.com/authentication/verifying-requests-from-slack
+			name:       "example request",
+			body:       "token=xyzz0WbapA4vBCDEFasx0q6G&team_id=T1DC2JH3J&team_domain=testteamnow&channel_id=G8PSS9T3V&channel_name=foobar&user_id=U2CERLKJA&user_name=roadrunner&command=%2Fwebhook-collect&text=&response_url=https%3A%2F%2Fhooks.slack.com%2Fcommands%2FT1DC2JH3J%2F397700885554%2F96rGlfmibIGlgcZRskXaIFfN&trigger_id=398738663015.47445629121.803a0bc887a14d10d2c447fce8b6703c",
+			secret:     "8f742231b10e8888abcd99yyyzzz85a5",
+			timestamp:  "1531420618",
+			signature:  "v0=a2114d57b48eac39b9ad189dd8316235a7b4a8d21a10bd27519666489c69b503",
+			errMessage: "none",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := checkHMAC(tt.body, tt.secret, tt.timestamp, tt.signature)
+			if err != nil && !strings.Contains(err.Error(), tt.errMessage) {
+				t.Errorf("SlackController.checkHMAC(): %s failed. error = %v.", tt.name, err)
+			} else if err == nil && tt.errMessage != "none" {
+				t.Errorf("SlackController.checkHMAC(): %s failed.", tt.name)
 			}
 		})
 	}
