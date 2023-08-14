@@ -6,13 +6,13 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/kimikimi714/jimiko/log"
 	"github.com/kimikimi714/jimiko/presenter"
 	"github.com/kimikimi714/jimiko/usecase"
 )
@@ -90,7 +90,7 @@ func checkHMAC(body, secret, timestamp, signature string) error {
 	}
 
 	if !hmac.Equal(bsignature, expectedMAC) {
-		log.Printf("sig: %v, calc: %v", []byte(signature[3:]), expectedMAC)
+		log.Warn("sig: %v, calc: %v", []byte(signature[3:]), expectedMAC)
 		return fmt.Errorf("Cannot verify this request.")
 	}
 	return nil
@@ -111,26 +111,26 @@ func (c SlackController) Reply(r SlackRequestBody) error {
 	case "買い物リスト":
 		m = "https://docs.google.com/spreadsheets/d/" + os.Getenv("SPREADSHEET_ID")
 	default:
-		log.Print("text: " + text)
+		log.Warn("text: " + text)
 		// FIXME 本当は text を直接 slack 表示させたい
 		// text の中にメンションが含まれると無限ループに入ってしまうので
 		// 今はログに出して slack には表示させないようにしている
 		m = "何していいかわかりません。ログを見てください。"
 	}
 	if err != nil {
-		log.Printf("failed to get items: %v", err)
+		log.Warn("failed to get items: %v", err)
 		m = "買い物リストがうまく取得できませんでした"
 	}
 
 	jsonStr, err := createSlackMessage(m)
 	if err != nil {
-		log.Fatalf("failed to create a message: %v", err)
+		log.Error("failed to create a message: %v", err)
 		return err
 	}
-	log.Print(jsonStr)
+	log.Info(jsonStr)
 	err = postMessage(jsonStr)
 	if err != nil {
-		log.Fatalf("failed to post a message to slack: %v", err)
+		log.Error("failed to post a message to slack: %v", err)
 		return err
 	}
 	return nil

@@ -2,12 +2,12 @@ package infrastructure
 
 import (
 	"context"
-	"log"
 
 	"google.golang.org/api/option"
 	"google.golang.org/api/sheets/v4"
 
 	"github.com/kimikimi714/jimiko/domain"
+	"github.com/kimikimi714/jimiko/log"
 )
 
 // ItemFinderWithSpreadsheet searches items in shopping list spreadsheet.
@@ -22,7 +22,7 @@ func NewItemFinderWithSpreadsheet(spreadsheetID string) (*ItemFinderWithSpreadsh
 
 	s, err := sheets.NewService(ctx, option.WithScopes(sheets.SpreadsheetsReadonlyScope))
 	if err != nil {
-		log.Fatalf("Unable to retrieve Sheets client: %v", err)
+		log.Error("Unable to retrieve Sheets client: %s", err)
 		return nil, err
 	}
 
@@ -36,14 +36,14 @@ func NewItemFinderWithSpreadsheet(spreadsheetID string) (*ItemFinderWithSpreadsh
 func (f *ItemFinderWithSpreadsheet) FindAll() ([]*domain.Item, error) {
 	ss, err := f.svr.Spreadsheets.Get(f.id).Do()
 	if err != nil {
-		log.Fatalf("Could not find spreadsheet %v", f.id)
+		log.Error("Could not find spreadsheet %s", f.id)
 		return nil, err
 	}
 	var is []*domain.Item
 	for _, s := range ss.Sheets {
 		resp, err := f.svr.Spreadsheets.Values.Get(f.id, s.Properties.Title+"!A:B").Do()
 		if err != nil {
-			log.Fatalf("Could not read the sheet %v", s.Properties.Title)
+			log.Error("Could not read the sheet %v", s.Properties.Title)
 			return nil, err
 		}
 		is = append(is, fetchAllItemsFrom(s.Properties.Title, resp)...)
