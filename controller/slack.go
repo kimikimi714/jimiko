@@ -51,15 +51,13 @@ func (e EventData) text() string {
 func (c SlackController) Verify(headers http.Header, body, secret string) error {
 	timestamp := headers.Get("X-Slack-Request-Timestamp")
 	signature := headers.Get("X-Slack-Signature")
-	err := checkHeaders(timestamp, signature)
-	if err != nil {
+	if err := checkHeaders(timestamp, signature); err != nil {
 		return err
 	}
 	if secret == "" {
 		return fmt.Errorf("SLACK_SIGINING_SECRET is empty.")
 	}
-	err = checkHMAC(body, secret, timestamp, signature)
-	if err != nil {
+	if err := checkHMAC(body, secret, timestamp, signature); err != nil {
 		return err
 	}
 	return nil
