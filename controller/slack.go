@@ -1,22 +1,28 @@
 package controller
 
 import (
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
-	"log"
+	"fmt"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
+	"time"
 
+	"github.com/kimikimi714/jimiko/log"
 	"github.com/kimikimi714/jimiko/presenter"
 	"github.com/kimikimi714/jimiko/usecase"
 )
 
 // SlackRequestBody represents a request from Slack.
 type SlackRequestBody struct {
-	Type      string `json:"type"`
-	Token     string `json:"token"`
-	Challenge string `json:"challenge"`
-	Event     EventData
+	Type      string    `json:"type"`
+	Token     string    `json:"token,omitempty"`
+	Challenge string    `json:"challenge,omitempty"`
+	Event     EventData `json:"event,omitempty"`
 }
 
 // EventData represents event data from slack.
@@ -42,6 +48,52 @@ func (e EventData) text() string {
 	return text
 }
 
+func (c SlackController) Verify(headers http.Header, body, secret string) error {
+	timestamp := headers.Get("X-Slack-Request-Timestamp")
+	signature := headers.Get("X-Slack-Signature")
+	if err := checkHeaders(timestamp, signature); err != nil {
+		return err
+	}
+	if secret == "" {
+		return fmt.Errorf("SLACK_SIGINING_SECRET is empty.")
+	}
+	if err := checkHMAC(body, secret, timestamp, signature); err != nil {
+		return err
+	}
+	return nil
+}
+
+func checkHeaders(timestamp string, signature string) error {
+	if timestamp == "" || signature == "" {
+		return fmt.Errorf("Required headers are missing.")
+	}
+	sec, err := strconv.ParseInt(timestamp, 10, 64)
+	if err != nil {
+		return fmt.Errorf("Cannot parse X-Slack-Request-Timestamp header. Error: %s", err)
+	}
+
+	if time.Now().Unix()-sec > 60*5 {
+		return fmt.Errorf("Expired timestamp.")
+	}
+	return nil
+}
+
+func checkHMAC(body, secret, timestamp, signature string) error {
+	mac := hmac.New(sha256.New, []byte(secret))
+	mac.Write([]byte("v0:" + timestamp + ":" + body))
+	expectedMAC := mac.Sum(nil)
+	bsignature, err := hex.DecodeString(strings.TrimPrefix(signature, "v0="))
+	if err != nil {
+		return err
+	}
+
+	if !hmac.Equal(bsignature, expectedMAC) {
+		log.Warn("sig: %v, calc: %v", []byte(signature[3:]), expectedMAC)
+		return fmt.Errorf("Cannot verify this request.")
+	}
+	return nil
+}
+
 // Reply replies messages with enough / not enough shopping list to Slack.
 func (c SlackController) Reply(r SlackRequestBody) error {
 	text := r.Event.text()
@@ -57,26 +109,26 @@ func (c SlackController) Reply(r SlackRequestBody) error {
 	case "買い物リスト":
 		m = "https://docs.google.com/spreadsheets/d/" + os.Getenv("SPREADSHEET_ID")
 	default:
-		log.Print("text: " + text)
+		log.Warn("text: " + text)
 		// FIXME 本当は text を直接 slack 表示させたい
 		// text の中にメンションが含まれると無限ループに入ってしまうので
 		// 今はログに出して slack には表示させないようにしている
 		m = "何していいかわかりません。ログを見てください。"
 	}
 	if err != nil {
-		log.Printf("failed to get items: %v", err)
+		log.Warn("failed to get items: %v", err)
 		m = "買い物リストがうまく取得できませんでした"
 	}
 
 	jsonStr, err := createSlackMessage(m)
 	if err != nil {
-		log.Fatalf("failed to create a message: %v", err)
+		log.Error("failed to create a message: %v", err)
 		return err
 	}
-	log.Print(jsonStr)
+	log.Info(jsonStr)
 	err = postMessage(jsonStr)
 	if err != nil {
-		log.Fatalf("failed to post a message to slack: %v", err)
+		log.Error("failed to post a message to slack: %v", err)
 		return err
 	}
 	return nil
