@@ -1,0 +1,21 @@
+name: Auto-approve my PR
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+
+jobs:
+  self-approve:
+    runs-on: ubuntu-latest
+    if: |
+      github.actor == github.repository_owner
+      && ! github.event.pull_request.draft
+    steps:
+      - name: Approve a PR
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
