@@ -23,8 +23,5 @@ func slack(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	shouldReturn := c.Response(r, body, w)
-	if shouldReturn {
-		return
-	}
+	c.Response(r, body, w)
 }
