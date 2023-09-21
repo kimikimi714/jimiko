@@ -11,7 +11,7 @@ test:
 ## Lint
 .PHONY: lint
 lint:
-	@golint --set_exit_status ./...
+	@revive ./...
 
 ## deploy
 .PHONY: deploy
