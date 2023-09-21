@@ -13,3 +13,7 @@ test:
 lint:
 	@golint --set_exit_status ./...
 
+## deploy
+.PHONY: deploy
+deploy:
+	@gcloud functions deploy jimiko-slack-2nd-gen --entry-point Slack --gen2 --trigger-http --region=asia-northeast1 --env-vars-file .env.yaml --runtime=go120 --set-secrets 'SLACK_SIGINING_SECRET=jimiko-slack-signing:latest'
