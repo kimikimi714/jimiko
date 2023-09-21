@@ -135,19 +135,16 @@ func (c SlackController) reply(r slackRequestBody) error {
 	ip := presenter.ItemPresenter{}
 	var m string
 	var err error
-	switch text {
-	case "何がある?":
+	switch {
+	case strings.Contains(text, "ある"):
 		m, err = ip.ReadAllFullItems(ii)
-	case "何がない?":
+	case strings.Contains(text, "ない"):
 		m, err = ip.ReadAllLackedItems(ii)
-	case "買い物リスト":
+	case strings.Contains(text, "リスト"):
 		m = "https://docs.google.com/spreadsheets/d/" + os.Getenv("SPREADSHEET_ID")
 	default:
 		log.Warn("text: " + text)
-		// FIXME 本当は text を直接 slack 表示させたい
-		// text の中にメンションが含まれると無限ループに入ってしまうので
-		// 今はログに出して slack には表示させないようにしている
-		m = "何していいかわかりません。ログを見てください。"
+		m = "「" + text + "」だと何していいかわかりませんでした :cry:"
 	}
 	if err != nil {
 		log.Warn("failed to get items: %v", err)
