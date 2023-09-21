@@ -9,8 +9,7 @@ Usage:
     $(basename ${0}) [service]
 
 Services:
-    slack
-    dialogflow
+    slack (default)
 
 Options:
     --help, -h        print this
@@ -18,22 +17,13 @@ EOF
 }
 
 case $1 in
-slack)
-  FUNCTION="jimiko-slack-2nd-gen"
-  ENDPOINT="Slack"
-  ;;
-dialogflow)
-  FUNCTION="jimiko-dialogflow"
-  ENDPOINT="Dialogflow"
-  ;;
 --help | -h)
   usage
   exit 0
   ;;
 *)
-  echo "slack か dialogflow を指定してください"
-  usage
-  exit 1
+  FUNCTION="jimiko-slack-2nd-gen"
+  ENDPOINT="Slack"
   ;;
 esac
 
