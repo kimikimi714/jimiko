@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"github.com/kimikimi714/jimiko/domain"
-	"github.com/kimikimi714/jimiko/infrastructure"
+	"github.com/kimikimi714/jimiko/internal/domain"
+	"github.com/kimikimi714/jimiko/internal/infrastructure"
 )
 
 // ItemFilterWithItemFinder filters items ItemFinder found.

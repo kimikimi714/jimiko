@@ -1,13 +1,13 @@
 package presenter
 
 import (
-	"github.com/kimikimi714/jimiko/domain"
-	"github.com/kimikimi714/jimiko/usecase"
+	"github.com/kimikimi714/jimiko/internal/domain"
+	"github.com/kimikimi714/jimiko/internal/usecase"
 )
 
 // ItemPresenter creates some sentences which take into account
 // item statuses in shopping list.
-type ItemPresenter struct {}
+type ItemPresenter struct{}
 
 // ReadAllLackedItems processes into a phrase that means what items are not enough
 // in shopping list.
@@ -36,9 +36,9 @@ func (p ItemPresenter) ReadItemStatus(name string, filter usecase.ItemFilter) (s
 		return "", err
 	}
 	if i.Amount > 0 {
-		return  i.Name + "はあるよ。", nil
+		return i.Name + "はあるよ。", nil
 	}
-	return  i.Name + "はないよ。", nil
+	return i.Name + "はないよ。", nil
 }
 
 func concatAllItems(is []*domain.Item) string {

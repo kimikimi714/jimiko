@@ -8,8 +8,8 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
-	"github.com/kimikimi714/jimiko/controller"
-	"github.com/kimikimi714/jimiko/log"
+	"github.com/kimikimi714/jimiko/internal/controller"
+	"github.com/kimikimi714/jimiko/internal/log"
 )
 
 func init() {
