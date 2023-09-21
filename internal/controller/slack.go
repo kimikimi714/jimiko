@@ -38,6 +38,43 @@ type EventData struct {
 // SlackController represents interface which communicates with Slack.
 type SlackController struct{}
 
+func (c SlackController) Response(r *http.Request, body []byte, w http.ResponseWriter) bool {
+	secret := os.Getenv("SLACK_SIGINING_SECRET")
+	if err := c.Verify(r.Header, string(body), secret); err != nil {
+		log.Error("SlackController.Verify got error: %s.", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return true
+	}
+
+	var d SlackRequestBody
+	if err := json.Unmarshal(body, &d); err != nil {
+		log.Error("Failed to parse request body: %s.", string(body))
+		w.WriteHeader(http.StatusInternalServerError)
+		return true
+	}
+
+	if d.Type == "url_verification" {
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "text/plain")
+		fmt.Fprint(w, d.Challenge)
+		return true
+	}
+
+	if d.Type != "event_callback" || d.Event.Type != "app_mention" {
+		log.Warn("Not accepted event type:  %s / %s.", d.Type, d.Event.Type)
+		w.WriteHeader(http.StatusBadRequest)
+		return true
+	}
+
+	if err := c.Reply(d); err != nil {
+		log.Error("SlackController.Reply got error: %s.", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return true
+	}
+	w.WriteHeader(http.StatusOK)
+	return false
+}
+
 // text extracts text excluding bot name.
 func (e EventData) text() string {
 	text := e.Text
