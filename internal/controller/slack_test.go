@@ -165,7 +165,7 @@ func TestParseRequest(t *testing.T) {
 	}
 }
 
-func TestText(t *testing.T) {
+func TestRemoveText(t *testing.T) {
 	tests := []struct {
 		name   string
 		args   slackEventData
