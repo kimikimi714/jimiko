@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/kimikimi714/jimiko/domain"
+	"github.com/kimikimi714/jimiko/internal/domain"
 )
 
 func TestItemPresenter_ReadAllFullItems(t *testing.T) {

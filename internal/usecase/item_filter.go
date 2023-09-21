@@ -1,7 +1,7 @@
 package usecase
 
 import (
-	"github.com/kimikimi714/jimiko/domain"
+	"github.com/kimikimi714/jimiko/internal/domain"
 )
 
 // ItemFilter filters items from shopping list

@@ -12,9 +12,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kimikimi714/jimiko/log"
-	"github.com/kimikimi714/jimiko/presenter"
-	"github.com/kimikimi714/jimiko/usecase"
+	"github.com/kimikimi714/jimiko/internal/log"
+	"github.com/kimikimi714/jimiko/internal/presenter"
+	"github.com/kimikimi714/jimiko/internal/usecase"
 )
 
 // SlackRequestBody represents a request from Slack.

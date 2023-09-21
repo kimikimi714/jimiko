@@ -6,8 +6,8 @@ import (
 	"google.golang.org/api/option"
 	"google.golang.org/api/sheets/v4"
 
-	"github.com/kimikimi714/jimiko/domain"
-	"github.com/kimikimi714/jimiko/log"
+	"github.com/kimikimi714/jimiko/internal/domain"
+	"github.com/kimikimi714/jimiko/internal/log"
 )
 
 // ItemFinderWithSpreadsheet searches items in shopping list spreadsheet.
