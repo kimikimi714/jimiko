@@ -4,7 +4,7 @@ Jimiko
 ![](https://github.com/kimikimi714/jimiko/workflows/CI/badge.svg)
 
 話しかけたらいい感じに家のことを回してくれるbotです。  
-現時点ではGoogle Home(+Dialogflow)とSlackに対応しています。
+現時点ではSlackに対応しています。
 
 ## 機能
 
@@ -13,23 +13,24 @@ Jimiko
 
 ## 必要要件
 
-- Go 1.11+
+- Go 1.20+
 - Cloud Functions
 - Google Sheets
-- 以下のいずれか
-    - Google Home + Dialogflow
-    - Slack
-
-Google HomeとDialogflowを接続する方法などは[こちらの記事](https://kimikimi714.hatenablog.com/entry/2019/12/07/183000)をご覧ください。
+- Slack
 
 ## 使い方
 
-1. Google Homeに「じみこにつないで」と話しかけて、じみこを呼び出す。
-2. 聞きたいことをじみこに聞く。
-    - 「今何がある?」で在庫があるもの一覧を答える。
-    - 「今何がない?」で在庫がないもの一覧を答える。
-    - 「○○ある?」で特定の商品の在庫があるか、ないか答える。
-3. 「バイバイ」でじみことの会話を終了する。
+今在庫があるものだけ返す。
+
+```
+@<bot-name> 何がある?
+```
+
+今在庫がないものだけ返す。
+
+```
+@<bot-name> 何がない?
+```
 
 # ユニットテスト
 
@@ -43,7 +44,7 @@ make test
 必須パラメータは `.env.sample.yaml` を確認してください。
 
 ```
-scripts/deploy.sh {dialogflow|slack}
+make deploy
 ```
 
 ## 作者
