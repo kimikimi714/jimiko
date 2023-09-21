@@ -47,9 +47,6 @@ func slack(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// FIXME: slash command 対応
-	// メンションじゃなくてコマンドで聞けるようにしたい
-	// 地味子にメンション付きで話しかけないと反応しない
 	if d.Type != "event_callback" || d.Event.Type != "app_mention" {
 		log.Warn("Not accepted event type:  %s / %s.", d.Type, d.Event.Type)
 		w.WriteHeader(http.StatusBadRequest)
