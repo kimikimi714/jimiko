@@ -17,16 +17,16 @@ import (
 	"github.com/kimikimi714/jimiko/internal/usecase"
 )
 
-// SlackRequestBody represents a request from Slack.
-type SlackRequestBody struct {
-	Type      string    `json:"type"`
-	Token     string    `json:"token,omitempty"`
-	Challenge string    `json:"challenge,omitempty"`
-	Event     EventData `json:"event,omitempty"`
+// slackRequestBody represents a request from Slack.
+type slackRequestBody struct {
+	Type      string         `json:"type"`
+	Token     string         `json:"token,omitempty"`
+	Challenge string         `json:"challenge,omitempty"`
+	Event     slackEventData `json:"event,omitempty"`
 }
 
-// EventData represents event data from slack.
-type EventData struct {
+// slackEventData represents event data from slack.
+type slackEventData struct {
 	Type           string `json:"type"`
 	UserID         string `json:"user"`
 	Text           string `json:"text"`
@@ -40,13 +40,13 @@ type SlackController struct{}
 
 func (c SlackController) Response(r *http.Request, body []byte, w http.ResponseWriter) {
 	secret := os.Getenv("SLACK_SIGINING_SECRET")
-	if err := c.Verify(r.Header, string(body), secret); err != nil {
+	if err := c.verify(r.Header, string(body), secret); err != nil {
 		log.Error("SlackController.Verify got error: %s.", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	var d SlackRequestBody
+	var d slackRequestBody
 	if err := json.Unmarshal(body, &d); err != nil {
 		log.Error("Failed to parse request body: %s.", string(body))
 		w.WriteHeader(http.StatusInternalServerError)
@@ -66,7 +66,7 @@ func (c SlackController) Response(r *http.Request, body []byte, w http.ResponseW
 		return
 	}
 
-	if err := c.Reply(d); err != nil {
+	if err := c.reply(d); err != nil {
 		log.Error("SlackController.Reply got error: %s.", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -76,7 +76,7 @@ func (c SlackController) Response(r *http.Request, body []byte, w http.ResponseW
 }
 
 // text extracts text excluding bot name.
-func (e EventData) text() string {
+func (e slackEventData) text() string {
 	text := e.Text
 	prefix := os.Getenv("SLACK_BOT_NAME")
 	if strings.HasPrefix(text, prefix) {
@@ -85,7 +85,7 @@ func (e EventData) text() string {
 	return text
 }
 
-func (c SlackController) Verify(headers http.Header, body, secret string) error {
+func (c SlackController) verify(headers http.Header, body, secret string) error {
 	timestamp := headers.Get("X-Slack-Request-Timestamp")
 	signature := headers.Get("X-Slack-Signature")
 	if err := checkHeaders(timestamp, signature); err != nil {
@@ -131,8 +131,8 @@ func checkHMAC(body, secret, timestamp, signature string) error {
 	return nil
 }
 
-// Reply replies messages with enough / not enough shopping list to Slack.
-func (c SlackController) Reply(r SlackRequestBody) error {
+// reply replies messages with enough / not enough shopping list to Slack.
+func (c SlackController) reply(r slackRequestBody) error {
 	text := r.Event.text()
 	ii, _ := usecase.NewItemFilterWithSpreadsheet(os.Getenv("SPREADSHEET_ID"))
 	ip := presenter.ItemPresenter{}
