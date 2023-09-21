@@ -75,14 +75,10 @@ func (c SlackController) Response(r *http.Request, body []byte, w http.ResponseW
 	return
 }
 
-// text extracts text excluding bot name.
-func (e slackEventData) text() string {
-	text := e.Text
-	prefix := os.Getenv("SLACK_BOT_NAME")
-	if strings.HasPrefix(text, prefix) {
-		return strings.TrimPrefix(text, prefix)
-	}
-	return text
+// removeText extracts removeText excluding bot name.
+func (e slackEventData) removeText(remove string) string {
+	original := e.Text
+	return strings.ReplaceAll(original, remove, "")
 }
 
 func (c SlackController) verify(headers http.Header, body, secret string) error {
@@ -133,7 +129,8 @@ func checkHMAC(body, secret, timestamp, signature string) error {
 
 // reply replies messages with enough / not enough shopping list to Slack.
 func (c SlackController) reply(r slackRequestBody) error {
-	text := r.Event.text()
+	remove := os.Getenv("SLACK_BOT_NAME")
+	text := r.Event.removeText(remove)
 	ii, _ := usecase.NewItemFilterWithSpreadsheet(os.Getenv("SPREADSHEET_ID"))
 	ip := presenter.ItemPresenter{}
 	var m string

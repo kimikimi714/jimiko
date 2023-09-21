@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"os"
 	"strconv"
 	"strings"
 	"testing"
@@ -168,40 +167,30 @@ func TestParseRequest(t *testing.T) {
 
 func TestText(t *testing.T) {
 	tests := []struct {
-		name string
-		args slackEventData
-		want string
+		name   string
+		args   slackEventData
+		remove string
+		want   string
 	}{
 		{
-			name: "1 word",
-			args: slackEventData{Text: "test"},
-			want: "test",
+			name:   "don't remove",
+			args:   slackEventData{Text: "test test"},
+			remove: "",
+			want:   "test test",
 		},
 		{
-			name: "any words",
-			args: slackEventData{Text: "test test"},
-			want: "test test",
+			name:   "remove bot name",
+			args:   slackEventData{Text: "test bot test2"},
+			remove: "test bot",
+			want:   " test2",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.args.text(); got != tt.want {
+			if got := tt.args.removeText(tt.remove); got != tt.want {
 				t.Errorf("text() = %v, want %v", got, tt.want)
 			}
 		})
-	}
-}
-
-func TestText_RemoveBotName(t *testing.T) {
-	_ = os.Setenv("SLACK_BOT_NAME", "test bot ")
-	defer os.Unsetenv("SLACK_BOT_NAME")
-	e := slackEventData{
-		Text: "test bot test2",
-	}
-	want := "test2"
-	got := e.text()
-	if got != want {
-		t.Errorf("text() = %v, want %v", got, want)
 	}
 }
 
