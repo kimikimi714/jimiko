@@ -3,7 +3,7 @@ module github.com/kimikimi714/jimiko
 go 1.20
 
 require (
-	github.com/GoogleCloudPlatform/functions-framework-go v1.7.4
+	github.com/GoogleCloudPlatform/functions-framework-go v1.8.0
 	github.com/google/go-cmp v0.5.9
 	google.golang.org/api v0.142.0
 )
