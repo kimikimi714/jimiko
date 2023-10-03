@@ -1,3 +1,5 @@
+// Package infrastructure implements functions to retrieve items from a specific database.
+// It also handles item deletion and updating.
 package infrastructure
 
 import (
