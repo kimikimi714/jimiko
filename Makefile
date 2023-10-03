@@ -1,7 +1,7 @@
 ## Install dependencies
 .PHONY: deps
 deps:
-	@go get -v -d
+	@go get -v
 
 ## Run tests
 .PHONY: test
