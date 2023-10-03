@@ -13,11 +13,10 @@ jobs:
     - uses: actions/setup-go@v4
       with:
         go-version-file: 'go.mod'
-
-    - name: golangci-lint
-      uses: golangci/golangci-lint-action@v3
-      with:
-        version: latest
+    - name: install revive
+      run: go install github.com/mgechev/revive@latest
+    - name: lint
+      run: make lint
   test:
     runs-on: ubuntu-latest
     steps:

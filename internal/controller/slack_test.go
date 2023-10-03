@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"os"
 	"strconv"
 	"strings"
 	"testing"
@@ -22,19 +21,19 @@ func TestCheckHeaders(t *testing.T) {
 			name:       "headers missing",
 			signature:  "",
 			timestamp:  "",
-			errMessage: "Required headers are missing.",
+			errMessage: "required headers are missing",
 		},
 		{
 			name:       "signature header missing",
 			signature:  "",
 			timestamp:  "11111",
-			errMessage: "Required headers are missing.",
+			errMessage: "required headers are missing",
 		},
 		{
 			name:       "timestamp header missing",
 			signature:  "aaa",
 			timestamp:  "",
-			errMessage: "Required headers are missing.",
+			errMessage: "required headers are missing",
 		},
 		{
 			name:       "cannot parse timestamp",
@@ -46,7 +45,7 @@ func TestCheckHeaders(t *testing.T) {
 			name:       "expired 10 min ago",
 			signature:  "aaa",
 			timestamp:  strconv.FormatInt(time.Now().Unix()-60*10, 10),
-			errMessage: "Expired timestamp.",
+			errMessage: "timestamp is expired",
 		},
 		{
 			name:       "nomal headers",
@@ -82,7 +81,7 @@ func TestCheckHMAC(t *testing.T) {
 			secret:     "dummy",
 			timestamp:  "111",
 			signature:  "v0=a2114d57b48eac39b9ad189dd8316235a7b4a8d21a10bd27519666489c69b503",
-			errMessage: "Cannot verify this request.",
+			errMessage: "cannot verify this request",
 		},
 		{
 			// see: https://api.slack.com/authentication/verifying-requests-from-slack
@@ -110,17 +109,17 @@ func TestParseRequest(t *testing.T) {
 	tests := []struct {
 		name string
 		json string
-		want SlackRequestBody
+		want slackRequestBody
 	}{
 		{
 			name: "only type",
 			json: `{ "type": "test" }`,
-			want: SlackRequestBody{Type: "test"},
+			want: slackRequestBody{Type: "test"},
 		},
 		{
 			name: "url_verification request", // see: https://api.slack.com/events/url_verification
 			json: `{ "token": "token", "challenge": "XXXX", "type": "url_verification" }`,
-			want: SlackRequestBody{Type: "url_verification", Token: "token", Challenge: "XXXX"},
+			want: slackRequestBody{Type: "url_verification", Token: "token", Challenge: "XXXX"},
 		},
 		{
 			name: "app_mention request", // see: https://api.slack.com/events/app_mention#app_mention-event__example-event-payloads__standard-app-mention-when-your-app-is-already-in-channel
@@ -143,7 +142,7 @@ func TestParseRequest(t *testing.T) {
 					"U0LAN0Z89"
 				]
 			}`,
-			want: SlackRequestBody{Type: "event_callback", Token: "ZZZZZZWSxiZZZ2yIvs3peJ", Event: EventData{
+			want: slackRequestBody{Type: "event_callback", Token: "ZZZZZZWSxiZZZ2yIvs3peJ", Event: slackEventData{
 				Type:           "app_mention",
 				UserID:         "U123ABC456",
 				Text:           "What is the hour of the pearl, <@U0LAN0Z89>?",
@@ -155,7 +154,7 @@ func TestParseRequest(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var got SlackRequestBody
+			var got slackRequestBody
 			if err := json.Unmarshal([]byte(tt.json), &got); err != nil {
 				t.Fatalf("failed test: %+v", err)
 			}
@@ -166,42 +165,32 @@ func TestParseRequest(t *testing.T) {
 	}
 }
 
-func TestText(t *testing.T) {
+func TestRemoveText(t *testing.T) {
 	tests := []struct {
-		name string
-		args EventData
-		want string
+		name   string
+		args   slackEventData
+		remove string
+		want   string
 	}{
 		{
-			name: "1 word",
-			args: EventData{Text: "test"},
-			want: "test",
+			name:   "don't remove",
+			args:   slackEventData{Text: "test test"},
+			remove: "",
+			want:   "test test",
 		},
 		{
-			name: "any words",
-			args: EventData{Text: "test test"},
-			want: "test test",
+			name:   "remove bot name",
+			args:   slackEventData{Text: "test bot test2"},
+			remove: "test bot",
+			want:   " test2",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.args.text(); got != tt.want {
+			if got := tt.args.removeText(tt.remove); got != tt.want {
 				t.Errorf("text() = %v, want %v", got, tt.want)
 			}
 		})
-	}
-}
-
-func TestText_RemoveBotName(t *testing.T) {
-	_ = os.Setenv("SLACK_BOT_NAME", "test bot ")
-	defer os.Unsetenv("SLACK_BOT_NAME")
-	e := EventData{
-		Text: "test bot test2",
-	}
-	want := "test2"
-	got := e.text()
-	if got != want {
-		t.Errorf("text() = %v, want %v", got, want)
 	}
 }
 

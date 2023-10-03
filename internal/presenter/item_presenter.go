@@ -1,3 +1,4 @@
+// Package presenter implements functions to add specific information to retrieved items and return strings.
 package presenter
 
 import (
