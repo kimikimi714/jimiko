@@ -1,3 +1,4 @@
+// Package controller implements HTTP functions.
 package controller
 
 import (
@@ -38,6 +39,7 @@ type slackEventData struct {
 // SlackController represents interface which communicates with Slack.
 type SlackController struct{}
 
+// Response responses for Slack request.
 func (c SlackController) Response(r *http.Request, body []byte, w http.ResponseWriter) {
 	secret := os.Getenv("SLACK_SIGINING_SECRET")
 	if err := c.verify(r.Header, string(body), secret); err != nil {
@@ -88,7 +90,7 @@ func (c SlackController) verify(headers http.Header, body, secret string) error 
 		return err
 	}
 	if secret == "" {
-		return fmt.Errorf("SLACK_SIGINING_SECRET is empty.")
+		return fmt.Errorf("SLACK_SIGINING_SECRET is empty")
 	}
 	if err := checkHMAC(body, secret, timestamp, signature); err != nil {
 		return err
@@ -98,7 +100,7 @@ func (c SlackController) verify(headers http.Header, body, secret string) error 
 
 func checkHeaders(timestamp string, signature string) error {
 	if timestamp == "" || signature == "" {
-		return fmt.Errorf("Required headers are missing.")
+		return fmt.Errorf("required headers are missing")
 	}
 	sec, err := strconv.ParseInt(timestamp, 10, 64)
 	if err != nil {
@@ -106,7 +108,7 @@ func checkHeaders(timestamp string, signature string) error {
 	}
 
 	if time.Now().Unix()-sec > 60*5 {
-		return fmt.Errorf("Expired timestamp.")
+		return fmt.Errorf("timestamp is expired")
 	}
 	return nil
 }
@@ -122,7 +124,7 @@ func checkHMAC(body, secret, timestamp, signature string) error {
 
 	if !hmac.Equal(bsignature, expectedMAC) {
 		log.Warn("sig: %v, calc: %v", []byte(signature[3:]), expectedMAC)
-		return fmt.Errorf("Cannot verify this request.")
+		return fmt.Errorf("cannot verify this request")
 	}
 	return nil
 }

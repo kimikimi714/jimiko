@@ -21,19 +21,19 @@ func TestCheckHeaders(t *testing.T) {
 			name:       "headers missing",
 			signature:  "",
 			timestamp:  "",
-			errMessage: "Required headers are missing.",
+			errMessage: "required headers are missing",
 		},
 		{
 			name:       "signature header missing",
 			signature:  "",
 			timestamp:  "11111",
-			errMessage: "Required headers are missing.",
+			errMessage: "required headers are missing",
 		},
 		{
 			name:       "timestamp header missing",
 			signature:  "aaa",
 			timestamp:  "",
-			errMessage: "Required headers are missing.",
+			errMessage: "required headers are missing",
 		},
 		{
 			name:       "cannot parse timestamp",
@@ -45,7 +45,7 @@ func TestCheckHeaders(t *testing.T) {
 			name:       "expired 10 min ago",
 			signature:  "aaa",
 			timestamp:  strconv.FormatInt(time.Now().Unix()-60*10, 10),
-			errMessage: "Expired timestamp.",
+			errMessage: "timestamp is expired",
 		},
 		{
 			name:       "nomal headers",
@@ -81,7 +81,7 @@ func TestCheckHMAC(t *testing.T) {
 			secret:     "dummy",
 			timestamp:  "111",
 			signature:  "v0=a2114d57b48eac39b9ad189dd8316235a7b4a8d21a10bd27519666489c69b503",
-			errMessage: "Cannot verify this request.",
+			errMessage: "cannot verify this request",
 		},
 		{
 			// see: https://api.slack.com/authentication/verifying-requests-from-slack
