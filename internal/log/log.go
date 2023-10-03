@@ -1,3 +1,4 @@
+// Package log implements a simple logger.
 package log
 
 import (
@@ -6,14 +7,17 @@ import (
 	"log"
 )
 
+// Info outputs logs with "INFO" severity.
 func Info(format string, v ...any) {
 	log.Println(entry{Severity: "INFO", Message: fmt.Sprintf(format, v...)})
 }
 
+// Warn outputs logs with "WARN" severity.
 func Warn(format string, v ...any) {
 	log.Println(entry{Severity: "WARN", Message: fmt.Sprintf(format, v...)})
 }
 
+// Error outputs logs with "ERROR" severity.
 func Error(format string, v ...any) {
 	log.Println(entry{Severity: "ERROR", Message: fmt.Sprintf(format, v...)})
 }
