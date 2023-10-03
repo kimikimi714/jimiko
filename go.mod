@@ -3,9 +3,9 @@ module github.com/kimikimi714/jimiko
 go 1.20
 
 require (
-	github.com/GoogleCloudPlatform/functions-framework-go v1.7.4
+	github.com/GoogleCloudPlatform/functions-framework-go v1.8.0
 	github.com/google/go-cmp v0.5.9
-	google.golang.org/api v0.142.0
+	google.golang.org/api v0.143.0
 )
 
 require (
@@ -16,7 +16,7 @@ require (
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/s2a-go v0.1.7 // indirect
 	github.com/google/uuid v1.3.1 // indirect
-	github.com/googleapis/enterprise-certificate-proxy v0.3.0 // indirect
+	github.com/googleapis/enterprise-certificate-proxy v0.3.1 // indirect
 	github.com/googleapis/gax-go/v2 v2.12.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
