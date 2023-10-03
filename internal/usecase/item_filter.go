@@ -1,3 +1,4 @@
+// Package usecase implements functions to filter and retrieve items based on specific use cases.
 package usecase
 
 import (
