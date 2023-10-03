@@ -1,3 +1,4 @@
+// Package jimiko is jimiko!
 package jimiko
 
 import (
