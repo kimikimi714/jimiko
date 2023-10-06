@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/GoogleCloudPlatform/functions-framework-go v1.8.0
 	github.com/google/go-cmp v0.5.9
-	google.golang.org/api v0.143.0
+	google.golang.org/api v0.145.0
 )
 
 require (
@@ -31,6 +31,6 @@ require (
 	golang.org/x/text v0.13.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230920204549-e6e6cdab5c13 // indirect
-	google.golang.org/grpc v1.58.1 // indirect
+	google.golang.org/grpc v1.58.2 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 )
