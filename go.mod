@@ -5,11 +5,11 @@ go 1.20
 require (
 	github.com/GoogleCloudPlatform/functions-framework-go v1.8.1
 	github.com/google/go-cmp v0.6.0
-	google.golang.org/api v0.186.0
+	google.golang.org/api v0.187.0
 )
 
 require (
-	cloud.google.com/go/auth v0.6.0 // indirect
+	cloud.google.com/go/auth v0.6.1 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.2 // indirect
 	cloud.google.com/go/compute/metadata v0.3.0 // indirect
 	github.com/cloudevents/sdk-go/v2 v2.15.2 // indirect
@@ -38,7 +38,8 @@ require (
 	golang.org/x/oauth2 v0.21.0 // indirect
 	golang.org/x/sys v0.21.0 // indirect
 	golang.org/x/text v0.16.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240617180043-68d350f18fd4 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20240617180043-68d350f18fd4 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240624140628-dc46fd24d27d // indirect
 	google.golang.org/grpc v1.64.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 )
