@@ -7,11 +7,11 @@ toolchain go1.23.2
 require (
 	github.com/GoogleCloudPlatform/functions-framework-go v1.9.0
 	github.com/google/go-cmp v0.6.0
-	google.golang.org/api v0.204.0
+	google.golang.org/api v0.205.0
 )
 
 require (
-	cloud.google.com/go/auth v0.10.0 // indirect
+	cloud.google.com/go/auth v0.10.1 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.5 // indirect
 	cloud.google.com/go/compute/metadata v0.5.2 // indirect
 	cloud.google.com/go/functions v1.19.1 // indirect
