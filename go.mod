@@ -7,7 +7,7 @@ toolchain go1.24.1
 require (
 	github.com/GoogleCloudPlatform/functions-framework-go v1.9.2
 	github.com/google/go-cmp v0.7.0
-	google.golang.org/api v0.234.0
+	google.golang.org/api v0.235.0
 )
 
 require (
