@@ -4,6 +4,9 @@ run-name: CI triggered by ${{ github.actor }}
 on:
   push:
 
+permissions:
+  contents: read
+
 jobs:
   lint:
     runs-on: ubuntu-latest

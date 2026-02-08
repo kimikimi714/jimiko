@@ -7,6 +7,9 @@ on:
       - synchronize
       - ready_for_review
 
+permissions:
+  pull-requests: write
+
 jobs:
   self-approve:
     runs-on: ubuntu-latest
