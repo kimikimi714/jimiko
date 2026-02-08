@@ -145,7 +145,7 @@ func (c SlackController) reply(r slackRequestBody) error {
 	case strings.Contains(text, "リスト"):
 		m = "https://docs.google.com/spreadsheets/d/" + os.Getenv("SPREADSHEET_ID")
 	default:
-		log.Warn("text: " + text)
+		log.Warn("text: %s", text)
 		m = "「" + text + "」だと何していいかわかりませんでした :cry:"
 	}
 	if err != nil {
@@ -158,7 +158,7 @@ func (c SlackController) reply(r slackRequestBody) error {
 		log.Error("failed to create a message: %v", err)
 		return err
 	}
-	log.Info(jsonStr)
+	log.Info("%s", jsonStr)
 	err = postMessage(jsonStr)
 	if err != nil {
 		log.Error("failed to post a message to slack: %v", err)
