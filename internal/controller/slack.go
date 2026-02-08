@@ -23,7 +23,7 @@ type slackRequestBody struct {
 	Type      string         `json:"type"`
 	Token     string         `json:"token,omitempty"`
 	Challenge string         `json:"challenge,omitempty"`
-	Event     slackEventData `json:"event,omitempty"`
+	Event     slackEventData `json:"event"`
 }
 
 // slackEventData represents event data from slack.
@@ -169,7 +169,7 @@ func (c SlackController) reply(r slackRequestBody) error {
 
 // createSlackMessage creates a message to post to slack
 func createSlackMessage(s string) (string, error) {
-	message := map[string]interface{}{
+	message := map[string]any{
 		"text": s,
 	}
 

@@ -13,6 +13,11 @@ test:
 lint:
 	@revive -set_exit_status ./...
 
+## Modernize Go code
+.PHONY: modernize
+modernize:
+	@modernize -fix ./...
+
 ## deploy
 .PHONY: deploy
 deploy:
