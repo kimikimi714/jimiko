@@ -2,6 +2,8 @@
 package presenter
 
 import (
+	"strings"
+
 	"github.com/kimikimi714/jimiko/internal/domain"
 	"github.com/kimikimi714/jimiko/internal/usecase"
 )
@@ -43,9 +45,9 @@ func (p ItemPresenter) ReadItemStatus(name string, filter usecase.ItemFilter) (s
 }
 
 func concatAllItems(is []*domain.Item) string {
-	res := ""
+	var res strings.Builder
 	for _, item := range is {
-		res += item.Name + "、"
+		res.WriteString(item.Name + "、")
 	}
-	return res
+	return res.String()
 }
