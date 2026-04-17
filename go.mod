@@ -5,7 +5,7 @@ go 1.25.0
 require (
 	github.com/GoogleCloudPlatform/functions-framework-go v1.9.2
 	github.com/google/go-cmp v0.7.0
-	google.golang.org/api v0.275.0
+	google.golang.org/api v0.276.0
 )
 
 require (
